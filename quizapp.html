@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Online Quiz Maker</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #f4f4f4;
+    }
+
+    header {
+      background: #333;
+      color: #fff;
+      padding: 1rem;
+      text-align: center;
+    }
+
+    nav a {
+      margin: 0 1rem;
+      color: #fff;
+      text-decoration: none;
+    }
+
+    .container {
+      padding: 2rem;
+    }
+
+    .quiz-list, .quiz-form, .quiz-display, .login-form {
+      display: none;
+    }
+
+    .active {
+      display: block;
+    }
+
+    input, button, textarea {
+      display: block;
+      width: 100%;
+      margin: 1rem 0;
+      padding: 0.5rem;
+    }
+
+    @media (max-width: 600px) {
+      header, .container {
+        padding: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Online Quiz Maker</h1>
+    <nav>
+      <a href="#" onclick="showPage('home')">Home</a>
+      <a href="#" onclick="showPage('create')">Create Quiz</a>
+      <a href="#" onclick="showPage('list')">Quiz List</a>
+      <a href="#" onclick="showPage('login')">Login</a>
+    </nav>
+  </header>
+
+  <div class="container">
+    <div id="home" class="active">
+      <h2>Welcome to the Quiz Maker!</h2>
+    </div>
+
+    <div id="create" class="quiz-form">
+      <h2>Create a Quiz</h2>
+      <input type="text" id="quiz-title" placeholder="Quiz Title">
+      <textarea id="quiz-question" placeholder="Enter a question..."></textarea>
+      <input type="text" id="quiz-answer" placeholder="Correct Answer">
+      <button onclick="createQuiz()">Create</button>
+    </div>
+
+    <div id="list" class="quiz-list">
+      <h2>Quiz List</h2>
+      <ul id="quizList"></ul>
+    </div>
+
+    <div id="display" class="quiz-display">
+      <h2>Take Quiz</h2>
+      <div id="quizContainer"></div>
+      <button onclick="submitQuiz()">Submit</button>
+      <div id="quizResult"></div>
+    </div>
+
+    <div id="login" class="login-form">
+      <h2>User Login</h2>
+      <input type="text" id="username" placeholder="Username">
+      <input type="password" id="password" placeholder="Password">
+      <button onclick="loginUser()">Login</button>
+    </div>
+  </div>
+
+  <script>
+    let quizzes = [];
+
+    function showPage(id) {
+      document.querySelectorAll('.container > div').forEach(div => div.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+    }
+
+    function createQuiz() {
+      const title = document.getElementById('quiz-title').value;
+      const question = document.getElementById('quiz-question').value;
+      const answer = document.getElementById('quiz-answer').value;
+      quizzes.push({ title, question, answer });
+      alert('Quiz created!');
+      document.getElementById('quiz-title').value = '';
+      document.getElementById('quiz-question').value = '';
+      document.getElementById('quiz-answer').value = '';
+      listQuizzes();
+    }
+
+    function listQuizzes() {
+      const quizList = document.getElementById('quizList');
+      quizList.innerHTML = '';
+      quizzes.forEach((q, i) => {
+        const li = document.createElement('li');
+        li.innerHTML = `${q.title} <button onclick="takeQuiz(${i})">Take</button>`;
+        quizList.appendChild(li);
+      });
+    }
+
+    function takeQuiz(index) {
+      showPage('display');
+      const quiz = quizzes[index];
+      const container = document.getElementById('quizContainer');
+      container.innerHTML = `
+        <p>${quiz.question}</p>
+        <input type="text" id="userAnswer" placeholder="Your answer...">
+      `;
+      container.dataset.correct = quiz.answer;
+    }
+
+    function submitQuiz() {
+      const userAnswer = document.getElementById('userAnswer').value;
+      const correct = document.getElementById('quizContainer').dataset.correct;
+      const result = userAnswer.trim().toLowerCase() === correct.trim().toLowerCase() ? 'Correct!' : `Incorrect. Correct answer was: ${correct}`;
+      document.getElementById('quizResult').textContent = result;
+    }
+
+    function loginUser() {
+      const user = document.getElementById('username').value;
+      const pass = document.getElementById('password').value;
+      if (user && pass) {
+        alert('Login successful (mock)');
+        showPage('home');
+      } else {
+        alert('Enter username and password');
+      }
+    }
+  </script>
+</body>
+</html>
